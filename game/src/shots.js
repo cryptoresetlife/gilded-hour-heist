@@ -59,6 +59,7 @@ function heistScene() {
   run.projectiles.push({ id: 'coin', fromX: run.thief.x, fromY: run.thief.y, x: lure.x, y: lure.y, t: 0.27, flight: 0.45 });
   run.thief.moving = true;
   run.toasts = [{ text: 'ODELL HEARD SOMETHING', tone: 'danger', life: 3 }];
+  run.cameraFocus = tileCentre(24, 7);
   return run;
 }
 

@@ -5,6 +5,7 @@ import { ALARM, PALETTE, TOOLS, VIEW } from '../config.js';
 import { alarmTier } from '../alarm.js';
 import { TOOL_ORDER } from '../tools.js';
 import { roomAt } from '../level.js';
+import { toScreen, toWorld } from './camera.js';
 
 function panel(g, x, y, w, h, r = 8) {
   g.fillStyle = PALETTE.hudPanel;
@@ -250,12 +251,13 @@ function drawLegend(g) {
   });
 }
 
-function drawPrompt(g, run) {
+function drawPrompt(g, run, camera) {
   const action = run.prompt;
   if (!action) return;
   const { thief } = run;
-  const x = thief.x;
-  const y = thief.y + VIEW.top - 34;
+  const at = toScreen(camera, thief.x, thief.y);
+  const x = at.x;
+  const y = at.y - 40;
   g.font = 'bold 11px "Trebuchet MS", sans-serif';
   const w = g.measureText(action.label).width + 40;
   panel(g, x - w / 2, y - 26, w, 22, 6);
@@ -266,7 +268,7 @@ function drawPrompt(g, run) {
     g.strokeStyle = PALETTE.gold;
     g.lineWidth = 4;
     g.beginPath();
-    g.arc(x, thief.y + VIEW.top, 18, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, thief.busy.progress));
+    g.arc(x, at.y, 24,-Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, thief.busy.progress));
     g.stroke();
     g.lineWidth = 1;
   }
@@ -321,13 +323,45 @@ function drawFinale(g, run) {
   g.fillText(caught ? run.endReason.toUpperCase() : `THE VAN PULLS AWAY WITH $${run.cash.toLocaleString('en-US')}`, VIEW.width / 2, 394);
 }
 
+/** The whole museum in the corner: rooms, the lit cones as dots and arcs, loot, the Orrery and Wren. */
+function drawMinimap(g, run, camera, floorplan, time) {
+  const s = 0.16;
+  const w = floorplan.width * s;
+  const h = floorplan.height * s;
+  const x = VIEW.width - w - 14;
+  const y = VIEW.top + 10;
+  panel(g, x - 6, y - 6, w + 12, h + 24, 6);
+  g.drawImage(floorplan, x, y, w, h);
+  g.fillStyle = 'rgba(10,14,40,0.35)';
+  g.fillRect(x, y, w, h);
+  const view = { x0: toWorld(camera, 0, 0), x1: toWorld(camera, VIEW.width, VIEW.height - VIEW.top) };
+  g.strokeStyle = 'rgba(244,234,210,0.8)';
+  g.strokeRect(x + view.x0.x * s, y + view.x0.y * s, (view.x1.x - view.x0.x) * s, (view.x1.y - view.x0.y) * s);
+  const dot = (px, py, r, color) => {
+    g.fillStyle = color;
+    g.beginPath();
+    g.arc(x + px * s, y + py * s, r, 0, Math.PI * 2);
+    g.fill();
+  };
+  for (const item of run.museum.loot) if (!item.taken) dot(item.x, item.y, 1.6, PALETTE.gold);
+  if (!run.museum.orrery.taken) dot(run.museum.orrery.x, run.museum.orrery.y, 3 + Math.sin(time * 4), PALETTE.gold);
+  for (const cam of run.cameras) dot(cam.x, cam.y, 2, cam.offline ? '#555a70' : cam.sees ? PALETTE.danger : '#ff60d0');
+  for (const guard of run.guards) dot(guard.x, guard.y, 2.6, guard.down ? '#6a7090' : guard.mode === 'alert' ? PALETTE.danger : '#ffc450');
+  dot(run.thief.x, run.thief.y, 3, PALETTE.scarf);
+  g.fillStyle = PALETTE.hudDim;
+  g.font = 'bold 9px "Trebuchet MS", sans-serif';
+  g.textAlign = 'left';
+  g.fillText('MUSEUM MAP', x, y + h + 12);
+}
+
 /** Every HUD layer, drawn in screen space over the world. */
-export function drawHud(g, run, time) {
+export function drawHud(g, run, time, camera, floorplan) {
   drawTopBar(g, run, time);
+  drawMinimap(g, run, camera, floorplan, time);
   drawToolBelt(g, run);
   drawStealthGauge(g, run);
   drawLegend(g);
-  drawPrompt(g, run);
+  drawPrompt(g, run, camera);
   drawToasts(g, run);
   drawLockdown(g, run, time);
   drawFinale(g, run);

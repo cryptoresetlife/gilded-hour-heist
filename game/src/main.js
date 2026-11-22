@@ -7,6 +7,7 @@ import { PHASE, budgetLeft, createRun, stepRun } from './heist.js';
 import { alarmTier } from './alarm.js';
 import { createInput } from './input.js';
 import { createRenderer, renderFrame } from './render/renderer.js';
+import { toWorld } from './render/camera.js';
 import { playSounds, unlockAudio, updateMusic } from './audio.js';
 import { sceneFor } from './shots.js';
 
@@ -81,7 +82,10 @@ function frame(now) {
       const snapshot = input.read();
       if (app.phase === PHASE.HEIST) {
         if (snapshot.pressed.includes('Escape')) app.phase = PHASE.PLAN;
-        else if (app.run.phase === PHASE.HEIST) stepRun(app.run, snapshot);
+        else if (app.run.phase === PHASE.HEIST) {
+          if (snapshot.throwAt) snapshot.throwAt = toWorld(renderer.camera, snapshot.throwAt.x, snapshot.throwAt.y);
+          stepRun(app.run, snapshot);
+        }
         else {
           // Hold the final moment in the museum (who caught you, or the van door closing) before the paper.
           app.run.freeze = (app.run.freeze ?? 0) + STEP;
@@ -92,7 +96,8 @@ function frame(now) {
     if (app.run) playSounds(app.run.sounds);
     updateMusic(elapsed, app.run ? alarmTier(app.run.alarm) : 0, app.phase === PHASE.HEIST);
   } else clock = 3.2;
-  renderFrame(renderer, app, clock, shot ? null : input.mouse);
+  const mouse = shot ? null : toWorld(renderer.camera, input.mouse.x, input.mouse.y);
+  renderFrame(renderer, app, clock, mouse, Boolean(shot));
   if (!shot) requestAnimationFrame(frame);
   else document.body.dataset.ready = '1';
 }

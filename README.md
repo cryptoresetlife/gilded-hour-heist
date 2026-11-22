@@ -12,7 +12,7 @@ blueprint (gallery and office keycard, the service vent, or cracking the vault d
 with a fixed budget (soot bombs, tick jammers, silent picks, sleep rags, free brass coins to lure guards), then
 creep through teal-hatched shadow, grab the Orrery and get back to the van.
 
-Everything is drawn on a canvas and every sound is synthesised with WebAudio: no libraries, no
+A close camera follows Wren with a live museum map in the corner. Everything is drawn on a canvas and every sound is synthesised with WebAudio: no libraries, no
 assets, no network requests.
 
 Controls: WASD move, Shift creep silently, hold E to act (or to use the sleep rag behind an unaware guard), 1-5 pick a tool, click to throw, Esc back to the plan.
