@@ -235,6 +235,24 @@ function drawLockdown(g, run, time) {
   g.fillText(`LOCKDOWN — POLICE IN ${run.alarm.countdown.toFixed(1)}s`, VIEW.width / 2, VIEW.height - 33);
 }
 
+/** The freeze-frame banner when the night ends: who caught the thief, or the getaway. */
+function drawFinale(g, run) {
+  if (run.phase === 'heist') return;
+  const caught = run.phase !== 'escaped';
+  const k = Math.min(1, (run.freeze ?? 0) * 3);
+  g.fillStyle = caught ? `rgba(120,0,20,${0.35 * k})` : `rgba(0,60,50,${0.3 * k})`;
+  g.fillRect(0, VIEW.top, VIEW.width, VIEW.height - VIEW.top);
+  g.fillStyle = `rgba(8,10,22,${0.9 * k})`;
+  g.fillRect(0, 300, VIEW.width, 110);
+  g.textAlign = 'center';
+  g.fillStyle = caught ? '#ff5a5a' : PALETTE.gold;
+  g.font = 'bold 54px Georgia, serif';
+  g.fillText(caught ? 'CAUGHT' : 'CLEAN GETAWAY', VIEW.width / 2, 362);
+  g.fillStyle = PALETTE.hudInk;
+  g.font = 'bold 16px "Trebuchet MS", sans-serif';
+  g.fillText(caught ? run.endReason.toUpperCase() : `THE VAN PULLS AWAY WITH $${run.cash.toLocaleString('en-US')}`, VIEW.width / 2, 394);
+}
+
 /** Every HUD layer, drawn in screen space over the world. */
 export function drawHud(g, run, time) {
   drawTopBar(g, run, time);
@@ -243,4 +261,5 @@ export function drawHud(g, run, time) {
   drawPrompt(g, run);
   drawToasts(g, run);
   drawLockdown(g, run, time);
+  drawFinale(g, run);
 }

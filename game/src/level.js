@@ -81,8 +81,8 @@ function placeLoot() {
     [19, 11, 350, 'Moonphase Watch'],
     [37, 2, 600, 'Curator’s Cash Box'],
     [30, 17, 200, 'Spare Gears Tin'],
-    [37, 19, 450, 'Pearl Escapement'],
-    [2, 19, 150, 'Courier Envelope'],
+    [37, 17, 450, 'Pearl Escapement'],
+    [4, 5, 150, 'Courier Envelope'],
   ];
   return items.map(([tx, ty, value, name], index) => ({ id: index, ...tileCentre(tx, ty), value, name, taken: false }));
 }

@@ -79,9 +79,11 @@ function frame(now) {
       const snapshot = input.read();
       if (app.phase === PHASE.HEIST) {
         if (snapshot.pressed.includes('Escape')) app.phase = PHASE.PLAN;
+        else if (app.run.phase === PHASE.HEIST) stepRun(app.run, snapshot);
         else {
-          stepRun(app.run, snapshot);
-          if (app.run.phase !== PHASE.HEIST) app.phase = app.run.phase;
+          // Hold the final moment in the museum (who caught you, or the van door closing) before the paper.
+          app.run.freeze = (app.run.freeze ?? 0) + STEP;
+          if (app.run.freeze > 1.8) app.phase = app.run.phase;
         }
       } else updateMenus(snapshot);
     }

@@ -46,6 +46,28 @@ export function drawDoors(g, museum) {
   }
 }
 
+/** Brass lamp fittings: a hot bulb with a soft halo, dark when the power or a jammer kills them. */
+export function drawLampFixtures(g, museum, power, time) {
+  museum.lamps.forEach((lamp, index) => {
+    const lit = power.on && !power.jammed(lamp.x, lamp.y);
+    if (lit) {
+      const halo = g.createRadialGradient(lamp.x, lamp.y, 1, lamp.x, lamp.y, 18);
+      halo.addColorStop(0, `rgba(255,236,180,${0.8 + Math.sin(time * 7 + index) * 0.1})`);
+      halo.addColorStop(1, 'rgba(255,200,120,0)');
+      g.fillStyle = halo;
+      g.beginPath();
+      g.arc(lamp.x, lamp.y, 18, 0, Math.PI * 2);
+      g.fill();
+    }
+    g.fillStyle = lit ? '#fff4d0' : '#3a3f55';
+    g.strokeStyle = '#8a6a2a';
+    g.beginPath();
+    g.arc(lamp.x, lamp.y, 4, 0, Math.PI * 2);
+    g.fill();
+    g.stroke();
+  });
+}
+
 export function drawExitAndVan(g, museum, time) {
   const z = museum.exitZone;
   g.save();
@@ -97,16 +119,42 @@ function glint(g, x, y, time, phase, size) {
   g.stroke();
 }
 
+/** A small gold pocket watch: the loot icon. */
+function drawPocketWatch(g, x, y) {
+  g.fillStyle = PALETTE.gold;
+  g.strokeStyle = PALETTE.goldDeep;
+  g.lineWidth = 1.5;
+  g.beginPath();
+  g.arc(x, y, 6.5, 0, Math.PI * 2);
+  g.fill();
+  g.stroke();
+  g.fillStyle = '#fff6d8';
+  g.beginPath();
+  g.arc(x, y, 4, 0, Math.PI * 2);
+  g.fill();
+  g.strokeStyle = '#5a3a08';
+  g.lineWidth = 1;
+  g.beginPath();
+  g.moveTo(x, y);
+  g.lineTo(x, y - 3);
+  g.moveTo(x, y);
+  g.lineTo(x + 2.5, y + 1);
+  g.stroke();
+  g.fillStyle = PALETTE.gold;
+  g.fillRect(x - 1.5, y - 10, 3, 3);
+}
+
 export function drawLoot(g, museum, time) {
   for (const item of museum.loot) {
     if (item.taken) continue;
-    glint(g, item.x, item.y, time, item.id, 7);
+    glint(g, item.x, item.y, time, item.id, 9);
+    drawPocketWatch(g, item.x, item.y);
+    g.font = 'bold 9px "Trebuchet MS", sans-serif';
+    g.textAlign = 'center';
+    g.fillStyle = 'rgba(10,12,26,0.8)';
+    g.fillRect(item.x - 15, item.y + 9, 30, 11);
     g.fillStyle = PALETTE.gold;
-    g.strokeStyle = PALETTE.goldDeep;
-    g.beginPath();
-    g.arc(item.x, item.y, 5, 0, Math.PI * 2);
-    g.fill();
-    g.stroke();
+    g.fillText(`$${item.value}`, item.x, item.y + 18);
   }
   if (!museum.keycard.taken) {
     const { x, y } = museum.keycard;
@@ -212,10 +260,35 @@ function drawSuspicion(g, guard) {
   g.fillText(alert ? '!' : '?', x, y + 5);
 }
 
+/** Each patrolling guard's next two legs as a faint dotted line, so a beat can be read ahead. */
+export function drawPatrolHints(g, guards, time) {
+  g.save();
+  g.strokeStyle = 'rgba(255,196,80,0.4)';
+  g.lineWidth = 2;
+  g.setLineDash([2, 7]);
+  g.lineDashOffset = -time * 12;
+  for (const guard of guards) {
+    if (guard.mode !== 'patrol') continue;
+    const a = guard.route[guard.waypoint];
+    const b = guard.route[(guard.waypoint + 1) % guard.route.length];
+    g.beginPath();
+    g.moveTo(guard.x, guard.y);
+    g.lineTo(a.x, a.y);
+    g.lineTo(b.x, b.y);
+    g.stroke();
+    g.fillStyle = 'rgba(255,196,80,0.55)';
+    g.beginPath();
+    g.arc(a.x, a.y, 3, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.restore();
+}
+
 export function drawGuards(g, guards) {
   for (const guard of guards) {
     g.save();
     g.translate(guard.x, guard.y);
+    g.scale(1.2, 1.2);
     g.fillStyle = 'rgba(0,0,0,0.45)';
     g.beginPath();
     g.ellipse(3, 4, 13, 11, 0, 0, Math.PI * 2);
@@ -256,11 +329,25 @@ export function drawThief(g, thief, time, hidden) {
     g.stroke();
     g.setLineDash([]);
   }
-  g.fillStyle = 'rgba(0,0,0,0.45)';
+  g.fillStyle = PALETTE.scarf;
+  g.font = 'bold 10px "Trebuchet MS", sans-serif';
+  g.textAlign = 'center';
+  g.fillText('WREN', 0, -22);
+  g.scale(1.3, 1.3);
+  const aura = g.createRadialGradient(0, 0, 4, 0, 0, 20);
+  aura.addColorStop(0, 'rgba(47,224,192,0.45)');
+  aura.addColorStop(1, 'rgba(47,224,192,0)');
+  g.fillStyle = aura;
   g.beginPath();
-  g.ellipse(3, 4, 11, 9, 0, 0, Math.PI * 2);
+  g.arc(0, 0, 20, 0, Math.PI * 2);
   g.fill();
   g.rotate(thief.facing);
+  g.strokeStyle = PALETTE.scarf;
+  g.lineWidth = 1.6;
+  g.beginPath();
+  g.ellipse(0, 0, 9.5, 11.5, 0, 0, Math.PI * 2);
+  g.stroke();
+  g.lineWidth = 1;
   const swing = thief.moving ? Math.sin(thief.stride * 0.3) * 3 : 0;
   g.fillStyle = '#0c0d12';
   g.fillRect(-3 + swing, -8, 6, 4);

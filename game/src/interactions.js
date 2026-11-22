@@ -32,7 +32,7 @@ export function availableAction(run) {
   if (inZone(museum.exitZone, thief.x, thief.y)) {
     return { id: 'escape', label: thief.carrying ? 'DRIVE OFF WITH THE ORRERY' : 'DRIVE OFF (no Orrery)', time: 0.6 };
   }
-  if (!museum.orrery.taken && near(museum.orrery)) return { id: 'lift', label: 'LIFT THE ORRERY', time: TIMES.liftOrrery };
+  if (!museum.orrery.taken && Math.hypot(museum.orrery.x - thief.x, museum.orrery.y - thief.y) < PLAYER.interactRange + 12) return { id: 'lift', label: 'LIFT THE ORRERY', time: TIMES.liftOrrery };
   const item = museum.loot.find((l) => !l.taken && near(l));
   if (item) return { id: 'grab', label: `TAKE ${item.name.toUpperCase()}  $${item.value}`, time: TIMES.grabLoot, item };
   if (!museum.keycard.taken && near(museum.keycard)) return { id: 'keycard', label: 'TAKE CURATOR KEYCARD', time: TIMES.grabLoot };

@@ -6,7 +6,8 @@ import { paintFloorplan } from './floorplan.js';
 import { createLighting, drawLighting } from './lighting.js';
 import { drawCones } from './cones.js';
 import {
-  drawAimLine, drawCameraBodies, drawDoors, drawEffects, drawExitAndVan, drawGuards, drawLoot, drawOrrery, drawThief, drawTrail,
+  drawAimLine, drawCameraBodies, drawDoors, drawEffects, drawExitAndVan, drawGuards, drawLampFixtures, drawLoot, drawOrrery,
+  drawPatrolHints, drawThief, drawTrail,
 } from './actors.js';
 import { drawHud } from './hud.js';
 import { drawEnd, drawPlan, drawTitle } from './screens.js';
@@ -27,7 +28,9 @@ function drawWorld(g, renderer, run, time, mouse) {
   drawDoors(g, run.museum);
   drawExitAndVan(g, run.museum, time);
   drawLighting(g, renderer.lighting, run, time);
+  drawLampFixtures(g, run.museum, run.power, time);
   drawCones(g, run);
+  drawPatrolHints(g, run.guards, time);
   drawTrail(g, run.routeTrail);
   drawLoot(g, run.museum, time);
   drawOrrery(g, run.museum.orrery, time, null);

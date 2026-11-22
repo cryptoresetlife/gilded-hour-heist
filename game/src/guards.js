@@ -146,6 +146,13 @@ function updateChase(guard, run, dt, pressure) {
     }
   } else {
     guard.lostTimer += dt;
+    guard.radio = (guard.radio ?? 0) - dt;
+    if (run.alarm.lockdown && guard.radio <= 0) {
+      // In lockdown the control room radios the thief's position to every guard every few seconds.
+      guard.radio = 3;
+      guard.lastSeen = { x: thief.x, y: thief.y };
+      guard.path = findPath(museum, guard.x, guard.y, thief.x, thief.y);
+    }
     if (!guard.path.length && guard.lastSeen) guard.path = findPath(museum, guard.x, guard.y, guard.lastSeen.x, guard.lastSeen.y);
   }
   const arrived = followPath(guard, museum, GUARD.chaseSpeed * Math.min(pressure, 1.2), dt);

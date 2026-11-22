@@ -4,6 +4,7 @@
 import { PALETTE, PLAN_BUDGET, TILE, TOOLS, VIEW } from '../config.js';
 import { TOOL_ORDER } from '../tools.js';
 import { budgetLeft } from '../heist.js';
+import { drawOrrery } from './actors.js';
 
 const ROUTES = [
   { name: 'A  GALLERY & KEYCARD', color: '#ffcf4a', note: 'Most loot, most eyes. Pick the office, swipe in.', points: [[3, 9], [7, 7], [9, 5], [14, 2], [26, 3], [30, 4], [37, 5], [30, 4], [26, 3], [25, 9], [27, 10], [34, 10]] },
@@ -195,6 +196,32 @@ function drawShop(g, loadout) {
   return buttons;
 }
 
+/** A pinned police bulletin with the Orrery on it: MISSING if it got away, RECOVERED if not. */
+function drawMissingPoster(g, cx, cy, time, missing) {
+  g.save();
+  g.translate(cx, cy);
+  g.rotate(-0.06);
+  g.fillStyle = '#e9dfc4';
+  g.fillRect(-90, -120, 180, 240);
+  g.fillStyle = '#1b1712';
+  g.textAlign = 'center';
+  g.font = 'bold 22px Georgia, serif';
+  g.fillText(missing ? 'MISSING' : 'RECOVERED', 0, -88);
+  g.fillStyle = '#20263a';
+  g.fillRect(-70, -72, 140, 130);
+  drawOrrery(g, { x: 0, y: -8, taken: false }, time, null);
+  g.fillStyle = '#1b1712';
+  g.font = 'bold 12px Georgia, serif';
+  g.fillText('The Gilded Orrery', 0, 78);
+  g.font = '11px Georgia, serif';
+  g.fillText('Brass, 1781. Reward offered.', 0, 96);
+  g.fillStyle = '#b02020';
+  g.beginPath();
+  g.arc(0, -112, 5, 0, Math.PI * 2);
+  g.fill();
+  g.restore();
+}
+
 /** The morning edition: headline, the night's numbers and the rating. */
 export function drawEnd(g, score, reason, time) {
   g.fillStyle = '#0b0f1e';
@@ -212,13 +239,46 @@ export function drawEnd(g, score, reason, time) {
     g.fillStyle = 'rgba(255,214,150,0.5)';
     for (let w = 0; w < 6; w += 1) if ((i + w) % 3) g.fillRect(bx + 12 + (w % 3) * 24, 490 - bh + Math.floor(w / 3) * 30, 10, 14);
   }
+  const moon = g.createRadialGradient(1160, 120, 10, 1160, 120, 90);
+  moon.addColorStop(0, 'rgba(255,244,214,0.95)');
+  moon.addColorStop(0.35, 'rgba(255,236,190,0.6)');
+  moon.addColorStop(1, 'rgba(255,230,180,0)');
+  g.fillStyle = moon;
+  g.beginPath();
+  g.arc(1160, 120, 90, 0, Math.PI * 2);
+  g.fill();
+  drawMissingPoster(g, 120, 220, time, score.escaped);
   g.fillStyle = '#14161f';
   g.fillRect(0, 470, VIEW.width, 250);
+  g.fillStyle = 'rgba(255,207,74,0.5)';
+  for (let x = ((time * -200) % 120) + 0; x < VIEW.width; x += 120) g.fillRect(x, 590, 60, 6);
   const vanX = score.escaped ? 200 + ((time * 160) % 1200) : 560;
   g.fillStyle = '#1e3b46';
-  g.fillRect(vanX, 430, 120, 50);
+  g.beginPath();
+  g.roundRect(vanX, 420, 120, 58, [10, 22, 4, 4]);
+  g.fill();
+  g.fillStyle = '#9fd8ff';
+  g.beginPath();
+  g.roundRect(vanX + 88, 428, 26, 18, [2, 12, 2, 2]);
+  g.fill();
   g.fillStyle = '#2fe0c0';
   g.fillRect(vanX, 452, 120, 6);
+  g.fillStyle = '#f4ead2';
+  g.font = 'bold 10px "Trebuchet MS", sans-serif';
+  g.textAlign = 'center';
+  g.fillText('QUILL & SONS', vanX + 46, 446);
+  for (const wx of [vanX + 26, vanX + 94]) {
+    g.fillStyle = '#07080c';
+    g.beginPath();
+    g.arc(wx, 478, 11, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = '#6a7080';
+    g.beginPath();
+    g.arc(wx, 478, 4, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.fillStyle = '#ff3040';
+  g.fillRect(vanX - 2, 440, 4, 10);
   const beam = g.createLinearGradient(vanX + 120, 0, vanX + 360, 0);
   beam.addColorStop(0, 'rgba(255,240,190,0.5)');
   beam.addColorStop(1, 'rgba(255,240,190,0)');

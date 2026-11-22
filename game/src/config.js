@@ -13,7 +13,7 @@ export const PLAYER = {
   sneakSpeed: 58,
   crawlSpeed: 40,
   walkNoise: 88,
-  interactRange: 30,
+  interactRange: 34,
 };
 
 export const GUARD = {
@@ -35,7 +35,7 @@ export const CAMERA = {
   fov: (48 * Math.PI) / 180,
   range: 250,
   sweepSpeed: 0.55,
-  alarmRate: 34,
+  alarmRate: 16,
   rays: 32,
 };
 
@@ -92,14 +92,14 @@ export const PALETTE = {
   thief: '#1a1c24',
   scarf: '#2fe0c0',
   guard: '#2b3f7a',
-  guardCone: 'rgba(255,196,80,0.22)',
+  guardCone: 'rgba(255,196,80,0.30)',
   guardConeHot: 'rgba(255,70,60,0.34)',
-  cameraCone: 'rgba(255,90,200,0.20)',
+  cameraCone: 'rgba(255,90,200,0.27)',
   cameraConeHot: 'rgba(255,40,80,0.38)',
   safe: 'rgba(47,224,192,0.55)',
   danger: '#ff4a4a',
   hudInk: '#f4ead2',
   hudDim: '#8c93b8',
   hudPanel: 'rgba(10,12,26,0.86)',
-  ambient: 'rgb(34,38,70)',
+  ambient: 'rgb(24,27,58)',
 };
