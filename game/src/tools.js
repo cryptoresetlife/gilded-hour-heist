@@ -5,7 +5,7 @@ import { TOOLS } from './config.js';
 import { hasLineOfSight } from './geometry.js';
 import { hearNoise } from './guards.js';
 
-export const TOOL_ORDER = ['coin', 'smoke', 'emp', 'pick'];
+export const TOOL_ORDER = ['coin', 'smoke', 'emp', 'pick', 'rag'];
 
 /** The power grid: lamps and cameras, the office loop timer and active jammer zones. */
 export function createPower() {

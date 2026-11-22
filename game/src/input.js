@@ -2,7 +2,7 @@
 // throws, and the cursor mapped from the scaled canvas back into museum pixels.
 import { VIEW } from './config.js';
 
-const TOOL_KEYS = { Digit1: 'coin', Digit2: 'smoke', Digit3: 'emp', Digit4: 'pick' };
+const TOOL_KEYS = { Digit1: 'coin', Digit2: 'smoke', Digit3: 'emp', Digit4: 'pick', Digit5: 'rag' };
 
 export function createInput(canvas) {
   const held = new Set();

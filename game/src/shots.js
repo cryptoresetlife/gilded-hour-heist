@@ -4,7 +4,7 @@
 import { PHASE, createRun, stepRun } from './heist.js';
 import { buildMuseum, tileCentre, T } from './level.js';
 import { raiseAlarm } from './alarm.js';
-import { MODE } from './guards.js';
+import { MODE, knockOut } from './guards.js';
 
 const IDLE = { left: 0, right: 0, up: 0, down: 0, sneak: true, interact: false, selectTool: null, throwAt: null };
 
@@ -24,7 +24,7 @@ function settle(run, steps) {
 }
 
 function heistScene() {
-  const run = createRun({ smoke: 1, emp: 1, pick: 1 });
+  const run = createRun({ smoke: 1, emp: 1, rag: 1 });
   run.time = 96;
   run.cash = 650;
   run.museum.loot[0].taken = true;
@@ -45,8 +45,9 @@ function heistScene() {
   odell.mode = MODE.INVESTIGATE;
   odell.path = [];
   odell.lookTimer = 2;
-  place(mirren, 24, 15, 0);
-  mirren.waypoint = 1;
+  place(mirren, 28, 17, 0.4);
+  knockOut(mirren);
+  run.kit.rag = 0;
   place(tamsin, 30, 9, 0);
   tamsin.waypoint = 1;
   raiseAlarm(run.alarm, 41);
@@ -112,7 +113,7 @@ function getawayRun() {
 export function sceneFor(name) {
   if (name === 'heist') return { phase: PHASE.HEIST, run: heistScene() };
   if (name === 'lockdown') return { phase: PHASE.HEIST, run: lockdownScene() };
-  if (name === 'plan') return { phase: PHASE.PLAN, loadout: { smoke: 1, emp: 1, pick: 1 }, planMuseum: buildMuseum() };
+  if (name === 'plan') return { phase: PHASE.PLAN, loadout: { smoke: 1, emp: 1, rag: 1 }, planMuseum: buildMuseum() };
   if (name === 'getaway') return { phase: PHASE.ESCAPED, run: getawayRun() };
   if (name === 'title') return { phase: PHASE.TITLE };
   return null;

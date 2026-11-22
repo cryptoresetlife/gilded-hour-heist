@@ -121,6 +121,17 @@ function drawToolIcon(g, id, x, y) {
     g.lineTo(x + 6, y + 8);
     g.stroke();
     g.lineWidth = 1;
+  } else if (id === 'rag') {
+    g.fillStyle = '#e8e2d0';
+    g.beginPath();
+    g.moveTo(x - 7, y - 5);
+    g.quadraticCurveTo(x, y - 9, x + 7, y - 4);
+    g.lineTo(x + 5, y + 7);
+    g.quadraticCurveTo(x - 1, y + 3, x - 6, y + 7);
+    g.closePath();
+    g.fill();
+    g.fillStyle = '#7fb0ff';
+    g.fillRect(x - 2, y - 2, 4, 4);
   } else {
     g.strokeStyle = '#d9dbe6';
     g.lineWidth = 2;
@@ -136,7 +147,7 @@ function drawToolIcon(g, id, x, y) {
 
 function drawToolBelt(g, run) {
   const y = VIEW.height - 58;
-  panel(g, 12, y, 484, 48);
+  panel(g, 12, y, 602, 48);
   TOOL_ORDER.forEach((id, i) => {
     const x = 20 + i * 118;
     const spec = TOOLS[id];
@@ -247,7 +258,7 @@ function drawFinale(g, run) {
   g.textAlign = 'center';
   g.fillStyle = caught ? '#ff5a5a' : PALETTE.gold;
   g.font = 'bold 54px Georgia, serif';
-  g.fillText(caught ? 'CAUGHT' : 'CLEAN GETAWAY', VIEW.width / 2, 362);
+  g.fillText(caught ? 'CAUGHT' : run.thief.carrying ? 'CLEAN GETAWAY' : 'WALKED AWAY', VIEW.width / 2, 362);
   g.fillStyle = PALETTE.hudInk;
   g.font = 'bold 16px "Trebuchet MS", sans-serif';
   g.fillText(caught ? run.endReason.toUpperCase() : `THE VAN PULLS AWAY WITH $${run.cash.toLocaleString('en-US')}`, VIEW.width / 2, 394);

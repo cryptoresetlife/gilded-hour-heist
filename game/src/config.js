@@ -58,6 +58,7 @@ export const TOOLS = {
   smoke: { key: '2', name: 'Soot Bomb', cost: 300, start: 0, range: 200, radius: 58, seconds: 7, info: 'blinds cones' },
   emp: { key: '3', name: 'Tick Jammer', cost: 400, start: 0, range: 240, radius: 150, seconds: 8, info: 'kills cameras + lamps' },
   pick: { key: '4', name: 'Silent Picks', cost: 250, start: 0, info: 'fast quiet locks' },
+  rag: { key: '5', name: 'Sleep Rag', cost: 350, start: 0, info: 'drop a guard from behind' },
 };
 
 export const PLAN_BUDGET = 1200;
@@ -70,6 +71,7 @@ export const TIMES = {
   liftOrrery: 2.2,
   useKeycard: 0.8,
   cutPower: 1.4,
+  takedown: 1.3,
 };
 
 export const PALETTE = {

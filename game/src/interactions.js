@@ -3,7 +3,8 @@
 // that finishes each one. Some actions are loud while they run.
 import { PLAYER, TILE, TIMES } from './config.js';
 import { T } from './level.js';
-import { hearNoise } from './guards.js';
+import { hearNoise, knockOut, MODE } from './guards.js';
+import { angleDiff } from './geometry.js';
 
 function inZone(zone, x, y) {
   const tx = Math.floor(x / TILE);
@@ -25,6 +26,19 @@ function adjacentTile(museum, thief, kind) {
   return null;
 }
 
+/** An unaware guard the thief stands right behind (outside the front half of his view), or null. */
+function guardFromBehind(run) {
+  const { thief } = run;
+  for (const guard of run.guards) {
+    if (guard.down || guard.mode === MODE.ALERT || guard.sees) continue;
+    const dist = Math.hypot(thief.x - guard.x, thief.y - guard.y);
+    if (dist > PLAYER.interactRange) continue;
+    const toThief = Math.atan2(thief.y - guard.y, thief.x - guard.x);
+    if (Math.abs(angleDiff(toThief, guard.facing)) > Math.PI / 2) return guard;
+  }
+  return null;
+}
+
 /** The one action available right now, or null. */
 export function availableAction(run) {
   const { thief, museum, kit } = run;
@@ -32,6 +46,8 @@ export function availableAction(run) {
   if (inZone(museum.exitZone, thief.x, thief.y)) {
     return { id: 'escape', label: thief.carrying ? 'DRIVE OFF WITH THE ORRERY' : 'DRIVE OFF (no Orrery)', time: 0.6 };
   }
+  const victim = kit.rag > 0 ? guardFromBehind(run) : null;
+  if (victim) return { id: 'takedown', label: `SLEEP RAG ON ${victim.name.toUpperCase()}`, time: TIMES.takedown, guard: victim };
   if (!museum.orrery.taken && Math.hypot(museum.orrery.x - thief.x, museum.orrery.y - thief.y) < PLAYER.interactRange + 12) return { id: 'lift', label: 'LIFT THE ORRERY', time: TIMES.liftOrrery };
   const item = museum.loot.find((l) => !l.taken && near(l));
   if (item) return { id: 'grab', label: `TAKE ${item.name.toUpperCase()}  $${item.value}`, time: TIMES.grabLoot, item };
@@ -52,7 +68,11 @@ export function availableAction(run) {
 
 function complete(run, action) {
   const { museum, thief } = run;
-  if (action.id === 'grab') {
+  if (action.id === 'takedown') {
+    run.kit.rag -= 1;
+    knockOut(action.guard);
+    run.events.push({ kind: 'loot', text: `${action.guard.name} is out cold. Hide before someone finds him` });
+  } else if (action.id === 'grab') {
     action.item.taken = true;
     run.cash += action.item.value;
     run.events.push({ kind: 'loot', text: `+$${action.item.value} ${action.item.name}` });
@@ -87,6 +107,7 @@ export function updateInteraction(run, input, dt) {
   }
   if (!thief.busy || thief.busy.id !== action.id) thief.busy = { id: action.id, progress: 0, noiseTimer: 0 };
   thief.busy.progress += dt / action.time;
+  if (action.guard) action.guard.grabbed = true;
   if (action.loud) {
     thief.busy.noiseTimer -= dt;
     if (thief.busy.noiseTimer <= 0) {

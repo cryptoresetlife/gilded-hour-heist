@@ -32,11 +32,28 @@ function cameraSees(camera, run) {
   return light < 0.22 ? 0 : light;
 }
 
+/** A camera that sweeps over a guard left asleep in the open reports him: drag-free bodies are a risk. */
+function spotSleepingGuard(camera, run) {
+  for (const guard of run.guards) {
+    if (!guard.down || guard.found) continue;
+    const dx = guard.x - camera.x;
+    const dy = guard.y - camera.y;
+    if (Math.hypot(dx, dy) > CAMERA.range) continue;
+    if (Math.abs(angleDiff(Math.atan2(dy, dx), camera.angle)) > CAMERA.fov / 2) continue;
+    if (!hasLineOfSight(run.museum, camera.x, camera.y, guard.x, guard.y, run.smokes)) continue;
+    guard.found = true;
+    raiseAlarm(run.alarm, 20);
+    const responder = nearestCalmGuard(run, guard.x, guard.y);
+    if (responder) sendToInvestigate(responder, run.museum, guard.x, guard.y);
+    run.events.push({ kind: 'body', guard: `Camera ${camera.id + 1}`, other: guard.name });
+  }
+}
+
 function nearestCalmGuard(run, x, y) {
   let best = null;
   let bestDist = Infinity;
   for (const guard of run.guards) {
-    if (guard.mode === MODE.ALERT) continue;
+    if (guard.mode === MODE.ALERT || guard.down) continue;
     const d = Math.hypot(guard.x - x, guard.y - y);
     if (d < bestDist) {
       bestDist = d;
@@ -57,6 +74,7 @@ export function updateCameras(run, dt) {
       camera.fan = [];
       continue;
     }
+    spotSleepingGuard(camera, run);
     const sight = cameraSees(camera, run);
     camera.sees = sight > 0;
     if (camera.sees) {

@@ -44,7 +44,7 @@ export function drawTitle(g, floorplan, time) {
   g.fillText('PRESS ENTER OR CLICK TO PLAN THE JOB', 640, 430);
   g.fillStyle = PALETTE.hudDim;
   g.font = '14px "Trebuchet MS", sans-serif';
-  g.fillText('WASD move  ·  SHIFT creep silently  ·  E hold to act  ·  1-4 pick tool  ·  CLICK throw', 640, 500);
+  g.fillText('WASD move  ·  SHIFT creep silently  ·  E hold to act  ·  1-5 pick tool  ·  CLICK throw', 640, 500);
   g.fillText('Stay in teal-hatched shadow. Read the cones. Watch the alarm meter.', 640, 524);
 }
 
@@ -152,23 +152,23 @@ function drawShop(g, loadout) {
   const buttons = [];
   TOOL_ORDER.forEach((id, i) => {
     const spec = TOOLS[id];
-    const by = y + 96 + i * 96;
+    const by = y + 84 + i * 80;
     g.fillStyle = 'rgba(255,255,255,0.05)';
     g.beginPath();
-    g.roundRect(x + 12, by, 256, 84, 8);
+    g.roundRect(x + 12, by, 256, 72, 8);
     g.fill();
     g.fillStyle = PALETTE.gold;
     g.font = 'bold 15px Georgia, serif';
-    g.fillText(spec.name, x + 24, by + 24);
+    g.fillText(spec.name, x + 24, by + 22);
     g.fillStyle = PALETTE.hudDim;
     g.font = '12px "Trebuchet MS", sans-serif';
-    g.fillText(spec.cost ? `$${spec.cost} each  ·  ${spec.info}` : `free x${spec.start}  ·  ${spec.info}`, x + 24, by + 44);
+    g.fillText(spec.cost ? `$${spec.cost} each  ·  ${spec.info}` : `free x${spec.start}  ·  ${spec.info}`, x + 24, by + 40);
     g.fillStyle = PALETTE.hudInk;
     g.font = 'bold 22px "Trebuchet MS", sans-serif';
-    g.fillText(`x${spec.start + (loadout[id] ?? 0)}`, x + 24, by + 74);
+    g.fillText(`x${spec.start + (loadout[id] ?? 0)}`, x + 24, by + 64);
     if (spec.cost) {
-      const minus = { x: x + 170, y: by + 50, w: 36, h: 28, id, delta: -1 };
-      const plus = { x: x + 220, y: by + 50, w: 36, h: 28, id, delta: 1 };
+      const minus = { x: x + 170, y: by + 8, w: 36, h: 28, id, delta: -1 };
+      const plus = { x: x + 220, y: by + 8, w: 36, h: 28, id, delta: 1 };
       for (const b of [minus, plus]) {
         const ok = b.delta < 0 ? (loadout[id] ?? 0) > 0 : left >= spec.cost;
         g.fillStyle = ok ? 'rgba(255,207,74,0.25)' : 'rgba(255,255,255,0.06)';

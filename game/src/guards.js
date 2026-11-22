@@ -99,6 +99,16 @@ export function updateGuards(run, dt) {
   const { museum, thief, alarm, smokes, power } = run;
   const pressure = alarmPressure(alarm);
   for (const guard of run.guards) {
+    if (guard.down) {
+      guard.fan = [];
+      continue;
+    }
+    if (guard.grabbed) {
+      guard.grabbed = false;
+      guard.sees = false;
+      continue;
+    }
+    spotDownedColleague(guard, run);
     const sight = guardSight(guard, thief, museum, smokes, power);
     guard.sees = sight > 0;
     if (guard.sees) {
@@ -164,10 +174,37 @@ function updateChase(guard, run, dt, pressure) {
   }
 }
 
+/** Put a guard to sleep with the rag: he drops where he stands and sees nothing from then on. */
+export function knockOut(guard) {
+  guard.down = true;
+  guard.mode = MODE.PATROL;
+  guard.sees = false;
+  guard.suspicion = 0;
+  guard.fan = [];
+  guard.path = [];
+}
+
+/** A guard who sees a sleeping colleague raises the alarm once and goes to look. */
+function spotDownedColleague(guard, run) {
+  for (const other of run.guards) {
+    if (!other.down || other.found) continue;
+    const dx = other.x - guard.x;
+    const dy = other.y - guard.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist > GUARD.range * 0.8) continue;
+    if (Math.abs(angleDiff(Math.atan2(dy, dx), guard.facing)) > GUARD.fov / 2) continue;
+    if (!hasLineOfSight(run.museum, guard.x, guard.y, other.x, other.y, run.smokes)) continue;
+    other.found = true;
+    raiseAlarm(run.alarm, 20);
+    sendToInvestigate(guard, run.museum, other.x, other.y);
+    run.events.push({ kind: 'body', guard: guard.name, other: other.name });
+  }
+}
+
 /** A noise reaches every guard in its radius who is not already chasing. */
 export function hearNoise(run, x, y, radius) {
   for (const guard of run.guards) {
-    if (guard.mode === MODE.ALERT) continue;
+    if (guard.mode === MODE.ALERT || guard.down) continue;
     if (Math.hypot(guard.x - x, guard.y - y) <= radius) sendToInvestigate(guard, run.museum, x, y);
   }
 }

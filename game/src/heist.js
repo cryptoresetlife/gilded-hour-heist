@@ -59,6 +59,7 @@ function handleEvents(run) {
       run.spottedCount += 1;
       toast(run, `${event.guard.toUpperCase()} SPOTTED YOU`, 'danger');
     } else if (event.kind === 'camera') toast(run, 'CAMERA HAS EYES ON YOU', 'danger');
+    else if (event.kind === 'body') toast(run, `${event.guard.toUpperCase()} FOUND ${event.other.toUpperCase()} ASLEEP`, 'danger');
     else if (event.kind === 'loot') toast(run, event.text, 'gold');
     else if (event.kind === 'orrery') {
       toast(run, event.text, 'gold');

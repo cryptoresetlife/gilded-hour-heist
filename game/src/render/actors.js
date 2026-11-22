@@ -268,7 +268,7 @@ export function drawPatrolHints(g, guards, time) {
   g.setLineDash([2, 7]);
   g.lineDashOffset = -time * 12;
   for (const guard of guards) {
-    if (guard.mode !== 'patrol') continue;
+    if (guard.mode !== 'patrol' || guard.down) continue;
     const a = guard.route[guard.waypoint];
     const b = guard.route[(guard.waypoint + 1) % guard.route.length];
     g.beginPath();
@@ -284,8 +284,40 @@ export function drawPatrolHints(g, guards, time) {
   g.restore();
 }
 
+/** A guard put to sleep: slumped on his side, cap off, a slow "z" drifting up. */
+function drawSleepingGuard(g, guard) {
+  g.save();
+  g.translate(guard.x, guard.y);
+  g.rotate(guard.facing + Math.PI / 2);
+  g.fillStyle = 'rgba(0,0,0,0.4)';
+  g.beginPath();
+  g.ellipse(2, 3, 15, 9, 0, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = PALETTE.guard;
+  g.beginPath();
+  g.ellipse(0, 0, 14, 8, 0, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = '#e6c9a0';
+  g.beginPath();
+  g.arc(12, 0, 5, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = '#111a33';
+  g.beginPath();
+  g.arc(20, 4, 4, 0, Math.PI * 2);
+  g.fill();
+  g.restore();
+  g.fillStyle = guard.found ? PALETTE.danger : '#9fb4ff';
+  g.font = 'bold 12px "Trebuchet MS", sans-serif';
+  g.textAlign = 'center';
+  g.fillText(guard.found ? 'FOUND!' : 'z z', guard.x, guard.y - 16);
+}
+
 export function drawGuards(g, guards) {
   for (const guard of guards) {
+    if (guard.down) {
+      drawSleepingGuard(g, guard);
+      continue;
+    }
     g.save();
     g.translate(guard.x, guard.y);
     g.scale(1.2, 1.2);

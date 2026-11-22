@@ -9,13 +9,13 @@ slips out of a moving van behind the Halvorsen Horology Museum to steal the Gild
 guards walk their beats with vision cones that walls, pillars and soot block; four cameras sweep
 their arcs; an alarm meter climbs through QUIET, WARY, HUNT and LOCKDOWN. Plan a route on the
 blueprint (gallery and office keycard, the service vent, or cracking the vault dial), buy a kit
-with a fixed budget (soot bombs, tick jammers, silent picks, free brass coins to lure guards), then
+with a fixed budget (soot bombs, tick jammers, silent picks, sleep rags, free brass coins to lure guards), then
 creep through teal-hatched shadow, grab the Orrery and get back to the van.
 
 Everything is drawn on a canvas and every sound is synthesised with WebAudio: no libraries, no
 assets, no network requests.
 
-Controls: WASD move, Shift creep silently, hold E to act, 1-4 pick a tool, click to throw, Esc back to the plan.
+Controls: WASD move, Shift creep silently, hold E to act (or to use the sleep rag behind an unaware guard), 1-5 pick a tool, click to throw, Esc back to the plan.
 
 ## Run it
 

@@ -53,7 +53,7 @@ function updateMenus(frame) {
       playSounds(['ui']);
     }
     for (const code of frame.pressed) {
-      const id = { Digit2: 'smoke', Digit3: 'emp', Digit4: 'pick' }[code];
+      const id = { Digit2: 'smoke', Digit3: 'emp', Digit4: 'pick', Digit5: 'rag' }[code];
       if (id && TOOLS[id].cost) changeLoadout(id, 1);
       if (code === 'Backspace') app.loadout = {};
     }
