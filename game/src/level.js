@@ -56,7 +56,17 @@ function placeOpenings(grid, floors) {
   }
 }
 
+/** Furniture that blocks walking but not sight: the CCTV desk in the office and the vault's clock shelves. */
+export const DECOR = [
+  { kind: 'cctv', tiles: [[34, 1], [35, 1], [36, 1]] },
+  { kind: 'shelf', tiles: [[35, 8], [36, 8]] },
+];
+
+/** Gilt-framed paintings hung along the gallery's north wall (tile columns on wall row 0). */
+export const PAINTINGS = [8, 12, 16, 20, 24];
+
 function placeCover(grid) {
+  for (const item of DECOR) for (const [x, y] of item.tiles) grid[y][x] = T.CASE;
   const pillars = [[13, 6], [13, 7], [18, 6], [18, 7], [23, 6], [23, 7]];
   const crates = [[2, 3], [3, 3], [4, 15], [4, 16], [2, 17], [15, 17], [16, 17], [26, 16], [27, 16], [31, 17], [9, 17]];
   const cases = [[10, 3], [11, 3], [10, 10], [11, 10], [16, 3], [16, 10], [21, 3], [21, 10], [31, 3], [32, 3]];

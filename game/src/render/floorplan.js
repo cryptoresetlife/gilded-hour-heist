@@ -2,7 +2,7 @@
 // (gallery carpet with gilt trim, dock concrete with hazard paint, office tiles, vault diamond
 // plate), raised walls with lit edges, marble pillars, crates, glass display cases and room names.
 import { COLS, PALETTE, ROWS, TILE } from '../config.js';
-import { ROOMS, T } from '../level.js';
+import { DECOR, PAINTINGS, ROOMS, T } from '../level.js';
 import { mulberry32 } from '../random.js';
 
 function paintVoid(g, w, h) {
@@ -192,6 +192,65 @@ function paintVents(g, grid) {
   }
 }
 
+function paintCctvDesk(g, tiles) {
+  const x0 = tiles[0][0] * TILE;
+  const y0 = tiles[0][1] * TILE;
+  const w = tiles.length * TILE;
+  g.fillStyle = '#3b2c22';
+  g.fillRect(x0 + 2, y0 + 4, w - 4, TILE - 6);
+  g.fillStyle = '#5a4434';
+  g.fillRect(x0 + 2, y0 + 4, w - 4, 4);
+  tiles.forEach((_, i) => {
+    const mx = x0 + i * TILE + 5;
+    g.fillStyle = '#10151c';
+    g.fillRect(mx, y0 + 8, 22, 15);
+    g.fillStyle = ['#2f8f7a', '#3a6fa8', '#7a3a8f'][i % 3];
+    g.fillRect(mx + 2, y0 + 10, 18, 11);
+    g.fillStyle = 'rgba(255,255,255,0.18)';
+    for (let s = 0; s < 11; s += 3) g.fillRect(mx + 2, y0 + 10 + s, 18, 1);
+    g.fillStyle = 'rgba(0,0,0,0.5)';
+    g.fillRect(mx + 6, y0 + 13, 6, 5);
+  });
+}
+
+function paintClockShelf(g, tiles) {
+  const x0 = tiles[0][0] * TILE;
+  const y0 = tiles[0][1] * TILE;
+  const w = tiles.length * TILE;
+  g.fillStyle = '#4a3020';
+  g.fillRect(x0 + 1, y0 + 3, w - 2, TILE - 8);
+  for (let i = 0; i < tiles.length * 3; i += 1) {
+    const cx = x0 + 6 + i * 10;
+    g.fillStyle = i % 2 ? '#d7b46a' : '#c0c8d8';
+    g.beginPath();
+    g.arc(cx, y0 + 14, 4, 0, Math.PI * 2);
+    g.fill();
+    g.strokeStyle = '#2a1a0a';
+    g.beginPath();
+    g.moveTo(cx, y0 + 14);
+    g.lineTo(cx, y0 + 11);
+    g.stroke();
+  }
+}
+
+function paintPaintings(g, columns) {
+  const palettes = [['#3a5a8a', '#e0b060'], ['#7a2a3a', '#f0d090'], ['#2a6a4a', '#d0e0a0'], ['#5a3a7a', '#f0a070'], ['#8a6a2a', '#a0c0f0']];
+  columns.forEach((col, i) => {
+    const x = col * TILE + 2;
+    const y = TILE - 12;
+    const [bg, fg] = palettes[i % palettes.length];
+    g.fillStyle = '#c99a2a';
+    g.fillRect(x - 2, y - 2, TILE * 2 - 4, 13);
+    g.fillStyle = bg;
+    g.fillRect(x, y, TILE * 2 - 8, 9);
+    g.fillStyle = fg;
+    g.beginPath();
+    g.arc(x + 12 + (i % 3) * 10, y + 4, 3, 0, Math.PI * 2);
+    g.fill();
+    g.fillRect(x + 4, y + 6, TILE * 2 - 16, 2);
+  });
+}
+
 function paintLabels(g) {
   g.font = '600 11px "Trebuchet MS", sans-serif';
   g.textAlign = 'left';
@@ -227,6 +286,11 @@ export function paintFloorplan(museum) {
       else if (kind === T.CASE) paintCase(g, x * TILE, y * TILE);
     }
   }
+  for (const item of DECOR) {
+    if (item.kind === 'cctv') paintCctvDesk(g, item.tiles);
+    else paintClockShelf(g, item.tiles);
+  }
+  paintPaintings(g, PAINTINGS);
   paintLabels(g);
   return canvas;
 }

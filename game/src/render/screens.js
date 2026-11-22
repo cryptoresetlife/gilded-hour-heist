@@ -8,9 +8,9 @@ import { drawOrrery } from './actors.js';
 import { createLasers } from '../lasers.js';
 
 const ROUTES = [
-  { name: 'A  GALLERY & KEYCARD', color: '#ffcf4a', note: 'Most loot, most eyes. Pick the office, swipe in.', points: [[3, 9], [7, 7], [9, 5], [14, 2], [26, 3], [30, 4], [37, 5], [30, 4], [26, 3], [25, 9], [27, 10], [34, 10]] },
-  { name: 'B  SERVICE VENT', color: '#2fe0c0', note: 'Locked dock door, a corridor camera, a slow crawl.', points: [[3, 13], [5, 17], [7, 17], [12, 18], [24, 18], [33, 15], [33, 13], [34, 10]] },
-  { name: 'C  CRACK THE DIAL', color: '#ff6a6a', note: 'No keycard. Nine loud seconds at the vault door.', points: [[3, 9], [7, 7], [12, 8], [20, 8], [26, 10], [27, 10], [34, 10]] },
+  { name: 'A  GALLERY & KEYCARD', color: '#ffcf4a', note: 'Most loot, most eyes. Pick the office, swipe in.', points: [[3, 9], [4, 6], [8, 6], [8, 4], [14, 4], [14, 2], [26, 2], [26, 3], [30, 3], [30, 5], [37, 5], [30, 5.2], [30, 3.2], [26.2, 3.2], [26.2, 10], [34, 10]] },
+  { name: 'B  SERVICE VENT', color: '#2fe0c0', note: 'Locked dock door, a laser gate, a slow crawl.', points: [[3, 14], [3, 17], [8, 17], [8, 15], [33, 15], [33, 11], [34, 10]] },
+  { name: 'C  CRACK THE DIAL', color: '#ff6a6a', note: 'No keycard. Nine loud seconds at the vault door.', points: [[3, 9.4], [4, 7.4], [8, 7.4], [8, 9], [25.8, 9], [25.8, 10.2], [34, 10.2]] },
 ];
 
 function heading(g, text, x, y, size = 42) {
