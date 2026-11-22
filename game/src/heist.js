@@ -39,7 +39,10 @@ export function createRun(loadout = {}) {
     smokes: [],
     rings: [],
     events: [],
-    toasts: [],
+    toasts: [
+      { text: 'HOLD SHIFT TO CREEP: GUARDS HEAR FOOTSTEPS', tone: 'gold', life: 6 },
+      { text: 'TEAL-HATCHED FLOOR IS SAFE SHADOW', tone: 'gold', life: 6 },
+    ],
     sounds: [],
     cash: 0,
     time: 0,

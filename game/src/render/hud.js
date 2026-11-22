@@ -29,6 +29,12 @@ function drawAlarmMeter(g, alarm, x, y, w, time) {
   g.font = 'bold 11px "Trebuchet MS", sans-serif';
   g.textAlign = 'left';
   g.fillText('ALARM', x, y + 4);
+  g.textAlign = 'right';
+  g.fillStyle = tier >= 2 ? '#ff7a6a' : PALETTE.hudInk;
+  g.font = 'bold 12px "Trebuchet MS", sans-serif';
+  g.fillText(`${Math.round(alarm.level)}%`, x + w + 40, y + 5);
+  g.textAlign = 'left';
+  g.font = 'bold 11px "Trebuchet MS", sans-serif';
   const bx = x + 52;
   const bw = w - 52;
   g.fillStyle = '#1c1f33';

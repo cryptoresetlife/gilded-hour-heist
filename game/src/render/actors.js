@@ -10,6 +10,14 @@ export function drawDoors(g, museum) {
       const kind = museum.grid[y][x];
       const px = x * TILE;
       const py = y * TILE;
+      if (kind === T.LOCKED || kind === T.VAULT) {
+        g.font = 'bold 8px "Trebuchet MS", sans-serif';
+        g.textAlign = 'center';
+        g.fillStyle = 'rgba(10,12,26,0.85)';
+        g.fillRect(px - 6, py - 14, TILE + 12, 11);
+        g.fillStyle = kind === T.VAULT ? '#c0d0ff' : '#ff8a7a';
+        g.fillText(kind === T.VAULT ? 'VAULT' : 'LOCKED', px + TILE / 2, py - 5);
+      }
       if (kind === T.LOCKED) {
         g.fillStyle = '#6b4424';
         g.fillRect(px + 3, py + 1, TILE - 6, TILE - 2);
@@ -381,6 +389,10 @@ export function drawGuards(g, guards) {
     g.fillStyle = '#ffe9a8';
     g.fillRect(9, 5, 7, 3);
     g.restore();
+    g.fillStyle = 'rgba(255,214,140,0.85)';
+    g.font = 'bold 9px "Trebuchet MS", sans-serif';
+    g.textAlign = 'center';
+    g.fillText(guard.name.toUpperCase(), guard.x, guard.y + 24);
     drawSuspicion(g, guard);
   }
 }
