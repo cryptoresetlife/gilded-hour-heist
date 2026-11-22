@@ -10,6 +10,7 @@ import { createKit, createPower, throwTool, TOOL_ORDER, updateTools } from './to
 import { createThief, updateThief } from './thief.js';
 import { updateInteraction } from './interactions.js';
 import { lightLevel } from './geometry.js';
+import { createLasers, updateLasers } from './lasers.js';
 
 export const PHASE = { TITLE: 'title', PLAN: 'plan', HEIST: 'heist', ESCAPED: 'escaped', CAUGHT: 'caught', BUSTED: 'busted' };
 
@@ -29,6 +30,7 @@ export function createRun(loadout = {}) {
     thief: createThief(museum),
     guards: createGuards(museum),
     cameras: createCameras(museum),
+    lasers: createLasers(),
     alarm: createAlarm(),
     power: createPower(),
     kit: createKit(loadout),
@@ -60,6 +62,7 @@ function handleEvents(run) {
       run.spottedCount += 1;
       toast(run, `${event.guard.toUpperCase()} SPOTTED YOU`, 'danger');
     } else if (event.kind === 'camera') toast(run, 'CAMERA HAS EYES ON YOU', 'danger');
+    else if (event.kind === 'laser') toast(run, 'LASER TRIPPED', 'danger');
     else if (event.kind === 'body') toast(run, `${event.guard.toUpperCase()} FOUND ${event.other.toUpperCase()} ASLEEP`, 'danger');
     else if (event.kind === 'loot') toast(run, event.text, 'gold');
     else if (event.kind === 'orrery') {
@@ -91,6 +94,7 @@ export function stepRun(run, input) {
   updateThief(run, input, dt);
   updateInteraction(run, input, dt);
   updateTools(run, dt);
+  updateLasers(run, dt);
   updateGuards(run, dt);
   updateCameras(run, dt);
   updateAlarm(run.alarm, dt, thiefHidden(run));

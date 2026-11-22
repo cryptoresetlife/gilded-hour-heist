@@ -46,6 +46,42 @@ export function drawDoors(g, museum) {
   }
 }
 
+/** Laser tripwires: a hot red beam with a bloom while live, a faint dotted guide while off. */
+export function drawLasers(g, lasers, time) {
+  for (const laser of lasers) {
+    g.save();
+    if (laser.active) {
+      const flick = 0.75 + Math.sin(time * 40 + laser.offset) * 0.25;
+      g.strokeStyle = `rgba(255,40,60,${0.25 * flick})`;
+      g.lineWidth = 9;
+      g.beginPath();
+      g.moveTo(laser.x1, laser.y1);
+      g.lineTo(laser.x2, laser.y2);
+      g.stroke();
+      g.strokeStyle = `rgba(255,120,130,${flick})`;
+      g.lineWidth = 2;
+      g.stroke();
+    } else {
+      g.strokeStyle = 'rgba(255,80,90,0.3)';
+      g.setLineDash([3, 6]);
+      g.lineWidth = 1;
+      g.beginPath();
+      g.moveTo(laser.x1, laser.y1);
+      g.lineTo(laser.x2, laser.y2);
+      g.stroke();
+    }
+    g.restore();
+    for (const [x, y] of [[laser.x1, laser.y1], [laser.x2, laser.y2]]) {
+      g.fillStyle = '#2a2f45';
+      g.fillRect(x - 5, y - 5, 10, 10);
+      g.fillStyle = laser.active ? '#ff3a4a' : '#5a3038';
+      g.beginPath();
+      g.arc(x, y, 3, 0, Math.PI * 2);
+      g.fill();
+    }
+  }
+}
+
 /** Brass lamp fittings: a hot bulb with a soft halo, dark when the power or a jammer kills them. */
 export function drawLampFixtures(g, museum, power, time) {
   museum.lamps.forEach((lamp, index) => {
@@ -451,9 +487,16 @@ export function drawEffects(g, run, time) {
     const k = shot.t / shot.flight;
     const x = shot.fromX + (shot.x - shot.fromX) * k;
     const y = shot.fromY + (shot.y - shot.fromY) * k - Math.sin(k * Math.PI) * 30;
+    g.strokeStyle = 'rgba(255,240,200,0.35)';
+    g.setLineDash([2, 4]);
+    g.beginPath();
+    g.moveTo(shot.fromX, shot.fromY);
+    g.quadraticCurveTo((shot.fromX + x) / 2, Math.min(shot.fromY, y) - 18, x, y);
+    g.stroke();
+    g.setLineDash([]);
     g.fillStyle = shot.id === 'coin' ? PALETTE.gold : shot.id === 'emp' ? '#5fe0ff' : '#777';
     g.beginPath();
-    g.arc(x, y, 4, 0, Math.PI * 2);
+    g.arc(x, y, 5, 0, Math.PI * 2);
     g.fill();
   }
 }

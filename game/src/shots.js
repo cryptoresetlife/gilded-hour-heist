@@ -55,6 +55,8 @@ function heistScene() {
   run.smokes.push({ x: tileCentre(21, 6).x, y: tileCentre(21, 6).y + 4, radius: 46, life: 5, full: 7 });
   run.kit.smoke = 0;
   settle(run, 8);
+  const lure = tileCentre(12, 9);
+  run.projectiles.push({ id: 'coin', fromX: run.thief.x, fromY: run.thief.y, x: lure.x, y: lure.y, t: 0.27, flight: 0.45 });
   run.thief.moving = true;
   run.toasts = [{ text: 'ODELL HEARD SOMETHING', tone: 'danger', life: 3 }];
   return run;

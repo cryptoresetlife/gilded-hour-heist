@@ -68,6 +68,7 @@ const EFFECTS = {
   busted: (t) => { for (let i = 0; i < 6; i += 1) tone(i % 2 ? 660 : 880, t + i * 0.22, 0.2, 'square', 0.1); },
   escape: (t) => [523, 659, 784, 1047].forEach((f, i) => tone(f, t + i * 0.12, 0.6, 'triangle', 0.12)),
   ui: (t) => tone(1046, t, 0.06, 'triangle', 0.08),
+  laser: (t) => { for (let i = 0; i < 4; i += 1) tone(1760, t + i * 0.12, 0.08, 'square', 0.09); },
 };
 
 /** Play every sound named this frame. */

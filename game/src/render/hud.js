@@ -229,13 +229,14 @@ function drawLegend(g) {
     ['rgba(47,224,192,0.8)', 'SAFE SHADOW'],
     ['rgba(255,196,80,0.9)', 'GUARD SIGHT'],
     ['rgba(255,90,200,0.9)', 'CAMERA'],
+    ['#ff3a4a', 'LASER'],
     [PALETTE.gold, 'LOOT'],
   ];
   g.font = 'bold 9px "Trebuchet MS", sans-serif';
   g.textAlign = 'left';
   items.forEach(([color, label], i) => {
-    const ix = x + 12 + (i % 2) * 140;
-    const iy = y + 16 + Math.floor(i / 2) * 18;
+    const ix = x + 10 + (i % 3) * 94;
+    const iy = y + 18 + Math.floor(i / 3) * 18;
     g.fillStyle = color;
     g.fillRect(ix, iy - 7, 14, 9);
     g.fillStyle = PALETTE.hudInk;

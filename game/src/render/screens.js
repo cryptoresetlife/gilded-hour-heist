@@ -5,6 +5,7 @@ import { PALETTE, PLAN_BUDGET, TILE, TOOLS, VIEW } from '../config.js';
 import { TOOL_ORDER } from '../tools.js';
 import { budgetLeft } from '../heist.js';
 import { drawOrrery } from './actors.js';
+import { createLasers } from '../lasers.js';
 
 const ROUTES = [
   { name: 'A  GALLERY & KEYCARD', color: '#ffcf4a', note: 'Most loot, most eyes. Pick the office, swipe in.', points: [[3, 9], [7, 7], [9, 5], [14, 2], [26, 3], [30, 4], [37, 5], [30, 4], [26, 3], [25, 9], [27, 10], [34, 10]] },
@@ -113,6 +114,15 @@ export function drawPlan(g, floorplan, museum, loadout, time) {
     g.stroke();
   }
   g.restore();
+  for (const laser of createLasers()) {
+    g.strokeStyle = 'rgba(255,60,80,0.95)';
+    g.lineWidth = 3;
+    g.beginPath();
+    g.moveTo(ox + laser.x1 * s, oy + laser.y1 * s);
+    g.lineTo(ox + laser.x2 * s, oy + laser.y2 * s);
+    g.stroke();
+    g.lineWidth = 1;
+  }
   ROUTES.forEach((route) => drawRoute(g, route, ox, oy, s, time));
   const o = museum.orrery;
   g.fillStyle = PALETTE.gold;
