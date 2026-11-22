@@ -206,6 +206,42 @@ function drawShop(g, loadout) {
   return buttons;
 }
 
+/** The police reconstruction: a small blueprint with the route the thief really walked tonight. */
+function drawReconstruction(g, floorplan, trail, x, y) {
+  const s = 0.3;
+  const w = floorplan.width * s;
+  const h = floorplan.height * s;
+  g.save();
+  g.translate(x, y);
+  g.rotate(0.03);
+  g.fillStyle = '#e9dfc4';
+  g.fillRect(-10, -30, w + 20, h + 42);
+  g.fillStyle = '#1b1712';
+  g.font = 'bold 13px Georgia, serif';
+  g.textAlign = 'left';
+  g.fillText('POLICE RECONSTRUCTION OF THE ROUTE', 0, -12);
+  g.globalAlpha = 0.85;
+  g.drawImage(floorplan, 0, 0, w, h);
+  g.globalAlpha = 1;
+  g.fillStyle = 'rgba(20,60,140,0.35)';
+  g.fillRect(0, 0, w, h);
+  if (trail.length > 1) {
+    g.strokeStyle = '#2fe0c0';
+    g.lineWidth = 2.5;
+    g.setLineDash([5, 4]);
+    g.beginPath();
+    trail.forEach((p, i) => (i ? g.lineTo(p.x * s, p.y * s) : g.moveTo(p.x * s, p.y * s)));
+    g.stroke();
+    g.setLineDash([]);
+    const end = trail[trail.length - 1];
+    g.fillStyle = '#2fe0c0';
+    g.beginPath();
+    g.arc(end.x * s, end.y * s, 4, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.restore();
+}
+
 /** A pinned police bulletin with the Orrery on it: MISSING if it got away, RECOVERED if not. */
 function drawMissingPoster(g, cx, cy, time, missing) {
   g.save();
@@ -233,7 +269,7 @@ function drawMissingPoster(g, cx, cy, time, missing) {
 }
 
 /** The morning edition: headline, the night's numbers and the rating. */
-export function drawEnd(g, score, reason, time) {
+export function drawEnd(g, score, reason, time, floorplan, trail) {
   g.fillStyle = '#0b0f1e';
   g.fillRect(0, 0, VIEW.width, VIEW.height);
   const sky = g.createLinearGradient(0, 0, 0, 720);
@@ -340,5 +376,9 @@ export function drawEnd(g, score, reason, time) {
   g.fillText(score.rating, 640, 360);
   g.fillStyle = PALETTE.hudInk;
   g.font = 'bold 18px "Trebuchet MS", sans-serif';
-  g.fillText('PRESS ENTER TO PLAN ANOTHER NIGHT', 640, 640);
+  if (floorplan) drawReconstruction(g, floorplan, trail, 40, 506);
+  g.fillStyle = PALETTE.hudInk;
+  g.font = 'bold 18px "Trebuchet MS", sans-serif';
+  g.textAlign = 'center';
+  g.fillText('PRESS ENTER TO PLAN ANOTHER NIGHT', 760, 660);
 }

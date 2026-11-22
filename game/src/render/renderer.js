@@ -67,5 +67,5 @@ export function renderFrame(renderer, app, time, mouse) {
   else if (app.phase === PHASE.HEIST) {
     drawWorld(g, renderer, app.run, time, mouse);
     drawHud(g, app.run, time);
-  } else drawEnd(g, scoreRun(app.run), app.run.endReason, time);
+  } else drawEnd(g, scoreRun(app.run), app.run.endReason, time, renderer.floorplan, app.run.routeTrail);
 }
