@@ -9,6 +9,7 @@ import { createCameras, updateCameras } from './cameras.js';
 import { createKit, createPower, throwTool, TOOL_ORDER, updateTools } from './tools.js';
 import { createThief, updateThief } from './thief.js';
 import { updateInteraction } from './interactions.js';
+import { lightLevel } from './geometry.js';
 
 export const PHASE = { TITLE: 'title', PLAN: 'plan', HEIST: 'heist', ESCAPED: 'escaped', CAUGHT: 'caught', BUSTED: 'busted' };
 
@@ -93,6 +94,7 @@ export function stepRun(run, input) {
   updateGuards(run, dt);
   updateCameras(run, dt);
   updateAlarm(run.alarm, dt, thiefHidden(run));
+  run.thiefLight = lightLevel(run.museum, run.thief.x, run.thief.y, run.power);
   if (run.alarm.lockdown && run.alarm.countdown <= 0 && run.phase === PHASE.HEIST) {
     run.events.push({ kind: 'busted' });
     run.phase = PHASE.BUSTED;

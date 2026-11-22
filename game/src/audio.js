@@ -9,7 +9,10 @@ let beat = 0;
 
 /** Create the audio context on the first user gesture (browsers require it). */
 export function unlockAudio() {
-  if (ctx) return;
+  if (ctx) {
+    if (ctx.state === 'suspended') ctx.resume();
+    return;
+  }
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   if (!AudioCtx) return;
   ctx = new AudioCtx();

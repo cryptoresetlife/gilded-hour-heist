@@ -63,6 +63,9 @@ function updateMenus(frame) {
   if (app.phase !== PHASE.HEIST && enter) app.phase = PHASE.PLAN;
 }
 
+// Browsers only let audio start inside a user gesture, so unlock it from the gesture itself.
+for (const type of ['keydown', 'mousedown']) window.addEventListener(type, unlockAudio);
+
 let last = performance.now();
 let acc = 0;
 let clock = 0;
@@ -70,7 +73,6 @@ let clock = 0;
 function frame(now) {
   const elapsed = Math.min(0.1, (now - last) / 1000);
   last = now;
-  if (input.unlocked) unlockAudio();
   if (!shot) {
     acc += elapsed;
     clock += elapsed;

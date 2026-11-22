@@ -21,6 +21,17 @@ export function createRenderer(canvas, museum) {
   };
 }
 
+/** Darken the frame's edges so the eye settles on the lit middle of the museum. */
+function drawVignette(g) {
+  const w = VIEW.width;
+  const h = VIEW.height - VIEW.top;
+  const grad = g.createRadialGradient(w / 2, h / 2, h * 0.45, w / 2, h / 2, w * 0.62);
+  grad.addColorStop(0, 'rgba(5,6,14,0)');
+  grad.addColorStop(1, 'rgba(5,6,14,0.4)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, w, h);
+}
+
 function drawWorld(g, renderer, run, time, mouse) {
   g.save();
   g.translate(0, VIEW.top);
@@ -40,6 +51,7 @@ function drawWorld(g, renderer, run, time, mouse) {
   const hidden = !run.guards.some((x) => x.sees) && !run.cameras.some((c) => c.sees);
   drawThief(g, run.thief, time, hidden);
   if (run.thief.carrying) drawOrrery(g, run.museum.orrery, time, run.thief);
+  drawVignette(g);
   if (mouse) drawAimLine(g, run.thief, mouse, TOOLS[run.selected].range && run.kit[run.selected] > 0 ? TOOLS[run.selected].range : 0);
   g.restore();
 }

@@ -171,6 +171,56 @@ function drawToolBelt(g, run) {
   });
 }
 
+/** The stealth gauge: how lit the thief stands (an eye that opens with the light) and how loud she moves. */
+function drawStealthGauge(g, run) {
+  const x = 628;
+  const y = VIEW.height - 58;
+  panel(g, x, y, 340, 48);
+  const light = run.thiefLight ?? 0;
+  const seen = run.guards.some((guard) => guard.sees) || run.cameras.some((c) => c.sees);
+  const open = 2 + light * 9;
+  const eyeX = x + 26;
+  const eyeY = y + 24;
+  g.strokeStyle = seen ? PALETTE.danger : light < 0.22 ? PALETTE.scarf : PALETTE.gold;
+  g.lineWidth = 2;
+  g.beginPath();
+  g.moveTo(eyeX - 15, eyeY);
+  g.quadraticCurveTo(eyeX, eyeY - open * 1.6, eyeX + 15, eyeY);
+  g.quadraticCurveTo(eyeX, eyeY + open * 1.6, eyeX - 15, eyeY);
+  g.stroke();
+  g.fillStyle = g.strokeStyle;
+  g.beginPath();
+  g.arc(eyeX, eyeY, Math.min(open, 5), 0, Math.PI * 2);
+  g.fill();
+  g.lineWidth = 1;
+  g.textAlign = 'left';
+  g.font = 'bold 11px "Trebuchet MS", sans-serif';
+  g.fillStyle = PALETTE.hudInk;
+  g.fillText(seen ? 'SEEN' : light < 0.22 ? 'IN SHADOW' : light < 0.6 ? 'DIM LIGHT' : 'IN LIGHT', x + 52, y + 19);
+  g.fillStyle = '#1c1f33';
+  g.fillRect(x + 52, y + 27, 120, 8);
+  const grad = g.createLinearGradient(x + 52, 0, x + 172, 0);
+  grad.addColorStop(0, PALETTE.scarf);
+  grad.addColorStop(1, PALETTE.gold);
+  g.fillStyle = grad;
+  g.fillRect(x + 52, y + 27, 120 * light, 8);
+  const { thief } = run;
+  const gait = thief.inVent ? 'CRAWLING' : !thief.moving ? 'STILL' : thief.sneaking ? 'CREEPING' : 'WALKING';
+  const loud = gait === 'WALKING';
+  g.fillStyle = loud ? '#ff9a7a' : PALETTE.hudInk;
+  g.fillText(gait, x + 196, y + 19);
+  for (let i = 0; i < 5; i += 1) {
+    const h = 4 + i * 3;
+    const on = loud ? i < 4 : gait === 'STILL' ? false : i < 1;
+    g.fillStyle = on ? (loud ? '#ff9a7a' : PALETTE.scarf) : '#2a2e48';
+    g.fillRect(x + 196 + i * 9, y + 40 - h, 6, h);
+  }
+  g.fillStyle = PALETTE.hudDim;
+  g.font = '9px "Trebuchet MS", sans-serif';
+  g.fillText('VISIBILITY', x + 128, y + 19);
+  g.fillText('NOISE', x + 250, y + 40);
+}
+
 function drawLegend(g) {
   const x = VIEW.width - 300;
   const y = VIEW.height - 58;
@@ -268,6 +318,7 @@ function drawFinale(g, run) {
 export function drawHud(g, run, time) {
   drawTopBar(g, run, time);
   drawToolBelt(g, run);
+  drawStealthGauge(g, run);
   drawLegend(g);
   drawPrompt(g, run);
   drawToasts(g, run);
