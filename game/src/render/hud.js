@@ -290,11 +290,11 @@ function drawLockdown(g, run, time) {
   grad.addColorStop(1, `rgba(255,20,40,${a})`);
   g.fillStyle = grad;
   g.fillRect(0, VIEW.top, VIEW.width, VIEW.height - VIEW.top);
-  panel(g, VIEW.width / 2 - 170, VIEW.height - 64, 340, 50);
+  panel(g, VIEW.width / 2 - 170, VIEW.height - 122, 340, 50);
   g.fillStyle = '#ff5a5a';
   g.font = 'bold 20px Georgia, serif';
   g.textAlign = 'center';
-  g.fillText(`LOCKDOWN — POLICE IN ${run.alarm.countdown.toFixed(1)}s`, VIEW.width / 2, VIEW.height - 33);
+  g.fillText(`LOCKDOWN — POLICE IN ${run.alarm.countdown.toFixed(1)}s`, VIEW.width / 2, VIEW.height - 91);
 }
 
 /** The freeze-frame banner when the night ends: who caught the thief, or the getaway. */
